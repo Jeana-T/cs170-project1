@@ -1,5 +1,44 @@
-def GoalTest():
-    goalState = [[1,2,3],[4,5,6],[7,8,9]]
+def goalTest(node):
+    goalState = [[1,2,3],[4,5,6],[7,8,0]]
 
-def GenAlg():
-    #testing
+    if node == goalState:
+        return True
+    else:
+        return False 
+
+def makeQueue(currentState):
+    print("NOT DONE")
+
+def empty(nodes):
+    print("NOT DONE")
+    return False
+
+def removeFront(node):
+    print("NOT DONE")
+
+def genSearchAlg(problem):
+    keepGoing = True
+    x, y = 0, 0
+    moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, up
+
+    nodes = makeQueue(problem)
+
+    while keepGoing:
+
+        if empty(nodes):
+            keepGoing = False
+            return "failure"
+        
+        node = removeFront(node) #remove front of node
+
+        if goalTest(node):
+            return #return node
+        
+        node = print("NOT DONE") #queueingFunc()
+
+
+print("start")
+
+testUserInput = [[1,2,3],[4,5,0],[7,8,6]]
+
+genSearchAlg(testUserInput)
