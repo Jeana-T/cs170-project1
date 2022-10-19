@@ -1,3 +1,12 @@
+# class makeNode:
+#     def __init__(self, problem, d, f):
+#         self.problem = problem
+#         self.d = d
+#         self.f = f
+ 
+#     def __repr__(self):
+#         return '{' + self.problem + ', ' + self.d + ', ' + self.f + '}'
+
 def goalTest(node):
     goalState = [[1,2,3],[4,5,6],[7,8,0]]
 
@@ -6,39 +15,53 @@ def goalTest(node):
     else:
         return False 
 
-def makeQueue(currentState):
-    print("NOT DONE")
-
+#def makeQueue(currentState):    #function may not be needed
+#    return makeNode(currentState, 1, None) #not sure if depth should be 1
+    
 def empty(nodes):
-    print("NOT DONE")
-    return False
+    if len(nodes) == 0: 
+        return True
+    else:
+        return False
 
-def removeFront(node):
-    print("NOT DONE")
+def removeFront(nodes): 
+    nodes.pop(0)
+    return nodes[0]
 
 def genSearchAlg(problem):
     keepGoing = True
     x, y = 0, 0
     moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, up
 
-    nodes = makeQueue(problem)
+    test2 = [[2,2,2],[2,2,2],[2,2,2]]
+    test3 = [[3,3,3],[3,3,3],[3,3,3]]
+    goalState = [[1,2,3],[4,5,6],[7,8,0]]
+
+    nodes = [problem, test2, test3, goalState] #[makeQueue(problem)]
 
     while keepGoing:
-
         if empty(nodes):
             keepGoing = False
             return "failure"
         
-        node = removeFront(node) #remove front of node
+        node = removeFront(nodes) #remove front of node
+        #####
+        #does node just want the first element of nodes once front element had been popped?
+        #####
 
         if goalTest(node):
-            return #return node
+            return "goal state found" #return node
         
-        node = print("NOT DONE") #queueingFunc()
+    #     node = print("NOT DONE") #queueingFunc()
 
+if __name__ == "__main__":
+    print("start")
 
-print("start")
+    testUserInput = [[1,2,3],[4,5,0],[7,8,6]]
 
-testUserInput = [[1,2,3],[4,5,0],[7,8,6]]
+    print(genSearchAlg(testUserInput))
+    
+    #print(*mylist,sep='\n') printing element of list on new line (use to print matrix) 
 
-genSearchAlg(testUserInput)
+    #moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)]
+    #for loop through moves, if illegal move on, if valid add/print
