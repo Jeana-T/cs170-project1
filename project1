@@ -1,22 +1,9 @@
-# class makeNode:
-#     def __init__(self, problem, d, f):
-#         self.problem = problem
-#         self.d = d
-#         self.f = f
- 
-#     def __repr__(self):
-#         return '{' + self.problem + ', ' + self.d + ', ' + self.f + '}'
-
-def goalTest(node):
-    goalState = [[1,2,3],[4,5,6],[7,8,0]]
-
-    if node == goalState:
-        return True
-    else:
-        return False 
-
-#def makeQueue(currentState):    #function may not be needed
-#    return makeNode(currentState, 1, None) #not sure if depth should be 1
+class Node:
+    def __init__(self, currentPuzzleState, parent, h, g):
+        self.currentPuzzleState = currentPuzzleState
+        self.parent = parent
+        self.h = h
+        self.g = g
     
 def empty(nodes):
     if len(nodes) == 0: 
@@ -24,20 +11,39 @@ def empty(nodes):
     else:
         return False
 
-def removeFront(nodes): 
-    nodes.pop(0)
-    return nodes[0]
+def removeFront(nodes):
+    removedNode = nodes.pop(0)
+    return removedNode
 
-def genSearchAlg(problem):
+def h_of_n(currentState, nodes):
+    h = 0
+
+    if():
+        h = 0
+    elif ():
+        #manhattan distance
+        for x in range(len(nodes)):
+            for y in range(len(nodes[0])):
+                if nodes[x][y] == 0:
+                    continue
+                elif nodes[x][y] != goalState[x][y]:
+                    h += 1
+    elif():
+        for x in range(len(nodes)):
+            for y in range(len(nodes[0])):
+                if nodes[x][y] == 0:
+                    continue
+                elif nodes[x][y] != goalState[x][y]:
+                    h += 1
+    
+    return h
+
+def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heuristic search
     keepGoing = True
-    x, y = 0, 0
-    moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, up
 
-    test2 = [[2,2,2],[2,2,2],[2,2,2]]
-    test3 = [[3,3,3],[3,3,3],[3,3,3]]
-    goalState = [[1,2,3],[4,5,6],[7,8,0]]
-
-    nodes = [problem, test2, test3, goalState] #[makeQueue(problem)]
+    firstNode = Node(problem, None, 0, 0)
+    secondNode = Node([1,2,3], None, 0, 0)
+    nodes = [firstNode, secondNode]
 
     while keepGoing:
         if empty(nodes):
@@ -45,23 +51,8 @@ def genSearchAlg(problem):
             return "failure"
         
         node = removeFront(nodes) #remove front of node
-        #####
-        #does node just want the first element of nodes once front element had been popped?
-        #####
-
-        if goalTest(node):
-            return "goal state found" #return node
-        
-    #     node = print("NOT DONE") #queueingFunc()
 
 if __name__ == "__main__":
-    print("start")
+    testUserInput = [1,2,3,4,5,0,7,8,6]
 
-    testUserInput = [[1,2,3],[4,5,0],[7,8,6]]
-
-    print(genSearchAlg(testUserInput))
-    
-    #print(*mylist,sep='\n') printing element of list on new line (use to print matrix) 
-
-    #moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)]
-    #for loop through moves, if illegal move on, if valid add/print
+    genSearchAlg(testUserInput, 1)
