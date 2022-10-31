@@ -19,8 +19,6 @@ def removeFront(nodes): #removes first element (node) of nodes and returns remov
     return removedNode
 
 def goalState(currentNodeState): #returns true if the currentNodeState (first element in nodes) is equivalent to goal
-    puzzleGoalState = [1,2,3,4,5,6,7,8,0] #only one possible goal state for 8 puzzle
-    
     if currentNodeState == puzzleGoalState:
         return True
     else:
@@ -54,44 +52,36 @@ def expand(node, problemOperators):
             children.append(Node(nodeStateCopy, node.currentPuzzleState, node.g + 1, 0))
     return children
 
-def uniformCostSearchQueue(nodes, children):
-    for k in range(len(nodes)):
-        print("before appending")
-        print(nodes[k].currentPuzzleState)
-
+def uniformCostSearchQueue(nodes, children):    
     for i in range(len(children)):
         #bisect.insort(nodes, children[i])
-        nodes.append(children[i])
-
+        children[i].h = 0 #uniform cost search is A* w/ h being hardcoded as 0
+        nodes.append(children[i]) #adding all children to nodes
+        
+    #sort nodes
     #nodes.sort(key=lambda x: x.g + x.h, reverse=True)
 
-    for j in range(len(nodes)):
-        print("after appending")
-        print(nodes[j].currentPuzzleState)
+def misplacedTileQueue(nodes, children):
+    for i in range(len(children)):
+        #bisect.insort(nodes, children[i])
+        children[i].h = misplacedTileH(children[i].currentPuzzleState)
+        #nodes.append(children[i]) #adding all children to nodes
 
-
-def h(currentState, nodes):
+def misplacedTileH(currentPuzzleStates): #return h(n) of current puzzle state
     h = 0
-
-    if():
-        h = 0
-    elif ():
-        #manhattan distance
-        for x in range(len(nodes)):
-            for y in range(len(nodes[0])):
-                if nodes[x][y] == 0:
+    
+    for x in range(len(currentPuzzleStates)):
+            for y in range(len(currentPuzzleStates[0])):
+                if currentPuzzleStates[x][y] == 0: #do not count the blank tile
                     continue
-                elif nodes[x][y] != goalState[x][y]:
-                    h += 1
-    elif():
-        for x in range(len(nodes)):
-            for y in range(len(nodes[0])):
-                if nodes[x][y] == 0:
-                    continue
-                elif nodes[x][y] != goalState[x][y]:
-                    h += 1
+                elif currentPuzzleStates[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
+                    h += 1 #if tile is misplaced add to h
     
     return h
+
+# def manhattanH(currentStates, nodes):
+    
+#     return h
 
 def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heuristic search
     keepGoing = True
@@ -114,16 +104,17 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
 
         if typeOfHueristic == 0: #uniform cost search
             print("uniform cost search")
-
             nodes = uniformCostSearchQueue(nodes, expand(node, problemOperators))
-        # elif typeOfHueristic == 1: #A* w/ Misplaced Tile heuristic
-        #     print("A* w/ Misplaced Tile heuristic")
-        #     nodes = queueingFunction(nodes, expand(node, problemOperators))
+        elif typeOfHueristic == 1: #A* w/ Misplaced Tile heuristic
+            print("A* w/ Misplaced Tile heuristic")
+            nodes = misplacedTileQueue(nodes, expand(node, problemOperators))
         # else: #A* w/ Manhattan Distance heuristic
         #     print("A* w/ Manhattan Distance heuristic")
         #     nodes = queueingFunction(nodes, expand(node, problemOperators))
 
 if __name__ == "__main__":
+    puzzleGoalState = [[1,2,3],[4,5,6],[7,8,0]] #only one possible goal state for 8 puzzle
+    
     testUserInput = [[1,2,3],[4,5,9],[7,8,0]]
 
-    genSearchAlg(testUserInput, 0)
+    genSearchAlg(testUserInput, 1)
