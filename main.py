@@ -24,14 +24,14 @@ def goalState(currentNodeState): #returns true if the currentNodeState (first el
     else:
         return False
 
-def findCoordinates(node, value): #finds the location of specified value in puzzle
+def findCoordinates(puzzleState, value): #finds the location of specified value in puzzle
     for x in range(3): #cycle through puzzle, one row at a time
         for y in range(3): #cycle through every element (column) of the current row
-            if node.currentPuzzleState[x][y] == value:
+            if puzzleState[x][y] == value:
                 return (x,y) #returns coordinates of specified value
 
 def expand(node, problemOperators):
-    blankTile = findCoordinates(node, 0) #coordinates of 0 (blank tile) 
+    blankTile = findCoordinates(node.currentPuzzleState, 0) #coordinates of 0 (blank tile) 
     x, y = blankTile[0], blankTile[1] # x -> column # of blank tile, y -> row # of blank tile
 
     moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, left (only possible moves in this puzzle)
@@ -75,19 +75,19 @@ def manhattanDistanceQueue(nodes, children):
         #nodes.append(children[i]) #adding all children to nodes
 
 def misplacedTileH(currentPuzzleState): #return h(n) of current puzzle state
-    h = 0
+    misplacedTileH = 0
     
     for x in range(len(currentPuzzleState)):
             for y in range(len(currentPuzzleState[0])):
                 if currentPuzzleState[x][y] == 0: #do not count the blank tile
                     continue
                 elif currentPuzzleState[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
-                    h += 1 #if tile is misplaced add to h
+                    misplacedTileH += 1 #if tile is misplaced add to h
     
-    return h
+    return misplacedTileH
 
 def manhattanH(currentPuzzleState):
-    h = 0
+    manhattanH = 0
 
     for x in range(len(currentPuzzleState)):
             for y in range(len(currentPuzzleState[0])):
@@ -95,18 +95,20 @@ def manhattanH(currentPuzzleState):
                     continue
                 elif currentPuzzleState[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
                     correctTilePositon = findCoordinates(puzzleGoalState, currentPuzzleState[x][y])
+                    print("correctTilePositon: ")
+                    print(correctTilePositon)
 
                     xDistance = abs(correctTilePositon[0] - x)
                     yDistance = abs(correctTilePositon[1] - y)
 
-                    h += xDistance + yDistance
-    return h
+                    manhattanH += xDistance + yDistance
+    print(str(manhattanH))
+    return manhattanH
 
 def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heuristic search
     keepGoing = True
     problemOperators = ['up', 'right', 'down', 'left']
 
-    #firstNode = Node([1,2,3,4,5,6,7,8,0], None, 0, 0)
     firstNode = Node(problem, None, 0, 0)
     secondNode = Node([1,2,3], problem, 0, 0)
     nodes = [firstNode]
@@ -134,6 +136,6 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
 if __name__ == "__main__":
     puzzleGoalState = [[1,2,3],[4,5,6],[7,8,0]] #only one possible goal state for 8 puzzle
     
-    testUserInput = [[1,2,3],[4,5,9],[7,8,0]]
+    testUserInput = [[3,2,8],[4,5,6],[7,1,0]]
 
     genSearchAlg(testUserInput, 2)
