@@ -24,14 +24,14 @@ def goalState(currentNodeState): #returns true if the currentNodeState (first el
     else:
         return False
 
-def locatateBlankTile(node): #finds the location of 0 (blank tile) is in the puzzle
+def findCoordinates(node, value): #finds the location of specified value in puzzle
     for x in range(3): #cycle through puzzle, one row at a time
         for y in range(3): #cycle through every element (column) of the current row
-            if node.currentPuzzleState[x][y] == 0:
-                return (x,y) #returns 0 coordinates
+            if node.currentPuzzleState[x][y] == value:
+                return (x,y) #returns coordinates of specified value
 
 def expand(node, problemOperators):
-    blankTile = locatateBlankTile(node) #coordinates of 0 (blank tile) 
+    blankTile = findCoordinates(node, 0) #coordinates of 0 (blank tile) 
     x, y = blankTile[0], blankTile[1] # x -> column # of blank tile, y -> row # of blank tile
 
     moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, left (only possible moves in this puzzle)
@@ -67,21 +67,40 @@ def misplacedTileQueue(nodes, children):
         children[i].h = misplacedTileH(children[i].currentPuzzleState)
         #nodes.append(children[i]) #adding all children to nodes
 
-def misplacedTileH(currentPuzzleStates): #return h(n) of current puzzle state
+def manhattanDistanceQueue(nodes, children):
+    for i in range(len(children)):
+        #bisect.insort(nodes, children[i])
+        #children[i].h = manhattanH(children[i].currentPuzzleState)
+        manhattanH(children[i].currentPuzzleState)
+        #nodes.append(children[i]) #adding all children to nodes
+
+def misplacedTileH(currentPuzzleState): #return h(n) of current puzzle state
     h = 0
     
-    for x in range(len(currentPuzzleStates)):
-            for y in range(len(currentPuzzleStates[0])):
-                if currentPuzzleStates[x][y] == 0: #do not count the blank tile
+    for x in range(len(currentPuzzleState)):
+            for y in range(len(currentPuzzleState[0])):
+                if currentPuzzleState[x][y] == 0: #do not count the blank tile
                     continue
-                elif currentPuzzleStates[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
+                elif currentPuzzleState[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
                     h += 1 #if tile is misplaced add to h
     
     return h
 
-# def manhattanH(currentStates, nodes):
-    
-#     return h
+def manhattanH(currentPuzzleState):
+    h = 0
+
+    for x in range(len(currentPuzzleState)):
+            for y in range(len(currentPuzzleState[0])):
+                if currentPuzzleState[x][y] == 0: #do not count the blank tile
+                    continue
+                elif currentPuzzleState[x][y] != puzzleGoalState[x][y]: #check to see if tile in current puzzle state is the correct tile (compared to goal state)
+                    correctTilePositon = findCoordinates(puzzleGoalState, currentPuzzleState[x][y])
+
+                    xDistance = abs(correctTilePositon[0] - x)
+                    yDistance = abs(correctTilePositon[1] - y)
+
+                    h += xDistance + yDistance
+    return h
 
 def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heuristic search
     keepGoing = True
@@ -108,13 +127,13 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
         elif typeOfHueristic == 1: #A* w/ Misplaced Tile heuristic
             print("A* w/ Misplaced Tile heuristic")
             nodes = misplacedTileQueue(nodes, expand(node, problemOperators))
-        # else: #A* w/ Manhattan Distance heuristic
-        #     print("A* w/ Manhattan Distance heuristic")
-        #     nodes = queueingFunction(nodes, expand(node, problemOperators))
+        elif typeOfHueristic == 2: #A* w/ Manhattan Distance heuristic
+            print("A* w/ Manhattan Distance heuristic")
+            nodes = manhattanDistanceQueue(nodes, expand(node, problemOperators))
 
 if __name__ == "__main__":
     puzzleGoalState = [[1,2,3],[4,5,6],[7,8,0]] #only one possible goal state for 8 puzzle
     
     testUserInput = [[1,2,3],[4,5,9],[7,8,0]]
 
-    genSearchAlg(testUserInput, 1)
+    genSearchAlg(testUserInput, 2)
