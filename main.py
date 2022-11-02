@@ -42,6 +42,20 @@ def expand(node, problemOperators, expanded):
 
     moves = [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)] #up, right, down, left (only possible moves in this puzzle)
     children = [] #array that will hold all children nodes of the current node
+    skipMove = -1
+
+    currentDepth = node.g
+
+    if node.g != 0:
+        previousMove = problemOperators.index(node.previousMove) #find index of the previous move in operators list
+
+        if previousMove == 2: #finding the opposite move to avoid repeating parent puzzle state
+            skipMove = 0
+        elif previousMove == 3:
+            skipMove = 1
+        else:
+            skipMove = previousMove + 2
+    
 
     for i in range(len(moves)): #cycle through every potential move
         nodeStateCopy = copy.deepcopy(node.currentPuzzleState) #create temp of puzzle board state
@@ -50,13 +64,13 @@ def expand(node, problemOperators, expanded):
 
         if a < 0 or a > 2 or b < 0 or b > 2: #if move is illegal, move on
             continue
-        elif (problemOperators[i] == node.previousMove): #stop repeating move to parent puzzle state
-            continue
         else:
             #swap selected tile (at a, b) and blank tile
             nodeStateCopy[x][y], nodeStateCopy[a][b] = nodeStateCopy[a][b], nodeStateCopy[x][y]
 
             if isDuplicateCheck(nodeStateCopy, expanded):
+                continue
+            elif skipMove == i:
                 continue
             else:
                 #add temp node (with switched tiles) to children array
@@ -127,7 +141,7 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
         if empty(nodes):
             keepGoing = False
             print("failure") #proved that there is no solution
-        
+            return
         node = removeFront(nodes)
         expanded.append(node) #keep track of the nodes already expanded
 
@@ -136,7 +150,7 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
 
         if goalState(node.currentPuzzleState):
             print("found solution") #return node
-
+            return
         if typeOfHueristic == 0: #uniform cost search
             uniformCostSearchQueue(nodes, expand(node, problemOperators, expanded))
         elif typeOfHueristic == 1: #A* w/ Misplaced Tile heuristic
@@ -148,6 +162,6 @@ def genSearchAlg(problem, typeOfHueristic): #problem operator is type of heurist
 if __name__ == "__main__":
     puzzleGoalState = [[1,2,3],[4,5,6],[7,8,0]] #only one possible goal state for 8 puzzle
     
-    testUserInput = [[1,2,3],[5,0,6],[4,7,8]]
+    testUserInput = [[7,1,2],[4,8,5],[6,3,0]]
 
-    genSearchAlg(testUserInput, 0)
+    genSearchAlg(testUserInput, 2)
